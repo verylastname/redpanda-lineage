@@ -27,10 +27,16 @@ jp.name: <utf8-string>
 jp.nicknames: <utf8-strings with comma separator>
 jp.othernames: <utf8-strings with comma separator>
 litter: <list-of-names-translated-into-panda-ids, alert on name collisions> 
-photo.1: <url>
-photo.2: <url>
-video.1: <url>
-video.2: <url>
+photo.1: <image-uri usable in an HTML img tag>
+photo.1.author: <name>
+photo.1.link: <uri>
+photo.2: <image-uri>
+photo.2.author: <name>
+photo.2.link: <uri>
+species: <1 for Ailurus fulgens fulgens, 2 for Ailurus fulgens styani>
+video.1: <video-uri>
+video.1.author: <name>
+video.1.link: <uri>
 zoo: <zoo-names-translated-into-zoo-id> 
 ```
  
@@ -50,9 +56,11 @@ en.name: ichikawa zoological park and gardens
 jp.address: <google maps address info from google.jp>
 jp.location: <utf8-string> 
 jp.name: <utf8-string>
-photo.1: <url>
-photo.2: <url>
-video.1: <url>
-video.2: <url>
-website: <url> 
+photo: <uri usable ins an HTML img tag>
+photo.author: <name>
+photo.link: <uri>
+video: <video-uri>
+video.author: <name>
+video.link: <uri>
+website: <zoo-homepage-uri> 
 ```
