@@ -13,11 +13,22 @@ Query.init = function() {
 }
 
 Query.env = {};
+// Credit for photos being shown
+Query.env.credit = undefined;
 Query.env.preserve_case = false;
 // When displaying results, normally we just display zoos and pandas ("entities").
 // However, other output modes are supported based on the supplied types.
 // The "credit" search results in a spread of photos credited to a particular user.
 Query.env.output = "entities";
+// If a URI indicates a specific photo, indicate which one here.
+Query.env.specific = undefined;
+// Reset query environment back to defaults, typically after a search is run
+Query.env.clear = function() {
+  Query.env.credit = undefined;
+  Query.env.preserve_case = false;
+  Query.env.output = "entities";
+  Query.env.specific = undefined;
+}
 
 /*
     Operator Definitions and aliases, organized into stages (processing order), and then
@@ -286,10 +297,15 @@ Query.lexer = new reLexer(Query.rules, 'expression', Query.actions);
 */
 // Differentiate between events that change the hashlink on a page.
 Query.hashlink = function(input) {
-  if ((input.indexOf("#panda_") == 0) || (input.indexOf("#zoo_") == 0)) {
-    // in-links don't need a redraw
-    return false;
-  } else if (input.indexOf("#panda/") == 0) {
+  if ((input.indexOf("#panda/") == 0) &&
+      (input.split("/").length == 4)) {
+    // go-link for a panda result with a chosen photo.
+    var uri_items = input.slice(7);
+    var [ panda, _, photo_id ] = uri_items.split("/");
+    Query.env.specific = photo_id;
+    return Query.resolver.subject(panda, "panda", L.display);    
+  } else if ((input.indexOf("#panda/") == 0) &&
+             (input.split("/").length == 2)) {
     // go-link for a single panda result.
     // for now, just a search result. soon, a detailed result page
     var panda = input.slice(7);
@@ -298,6 +314,12 @@ Query.hashlink = function(input) {
     // go-link for a single zoo result.
     var zoo = input.slice(5);
     return Query.resolver.subject(zoo, "zoo", L.display);
+  } else if (input.indexOf("#credit/") == 0) {
+    // go-link for a page of photo credits for a specific author
+    Query.env.credit = input.slice(8);
+    Query.env.preserve_case = true;   // Don't adjust case for author searches
+    Query.env.output = "photos";      // Set output mode for a photo list
+    return Query.resolver.subject(Query.env.credit, "credit", L.display);
   } else if (input.indexOf("#timeline/") == 0) {
     // show full info and timeline for a panda. TODO
     var panda = input.slice(10);
