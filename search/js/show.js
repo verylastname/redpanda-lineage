@@ -429,7 +429,7 @@ Show.emoji = {
     "edit": "📝",
   "father": "👨🏻",
   "female": "♀️",
-    "gift": "💝",
+    "gift": "🍎",
     "girl": "👧🏻",
     "home": "🏡",
 "language": "‍👁️‍🗨️",
@@ -469,11 +469,13 @@ Show.gui = {
   },
   "credit": {
     "cn": "TOWRITE",
-    "en": ["<INSERTUSER>",
+    "en": [Show.emoji.gift + " ",
+           "<INSERTUSER>",
            " has contributed ",
            "<INSERTNUMBER>",
            " photos."],
-    "jp": ["<INSERTUSER>",
+    "jp": [Show.emoji.gift + " ",
+           "<INSERTUSER>",
            "は",
            "<INSERTNUMBER>",
            "枚の写真を寄稿しました。"]
@@ -544,6 +546,11 @@ Show.gui = {
     "cn": Pandas.def.relations.siblings["cn"],
     "en": "Siblings",   // Capitalization
     "jp": Pandas.def.relations.siblings["jp"]
+  },
+  "title": {
+    "cn": "TOWRITE",
+    "en": "Red Panda Family",
+    "jp": "レッサーパンダのファミリー"
   }
 }
 
@@ -913,12 +920,8 @@ Show.displayPandaDetails = function(info) {
     // See how many other panda photos this user has posted
     var other_photos = document.createElement('p');
     var credit_count_link = document.createElement('a');
-    var credit_photos = [];
-    Pandas.searchPhotoCredit(info.credit).forEach(function(animal) {
-      credit_photos = credit_photos.concat(Show.pandaPhotoCredits(animal, info.photo_credit, L.display));
-    });
     credit_count_link.href = "#credit/" + info.photo_credit;
-    credit_count_link.innerText = Show.emoji.gift + " " + credit_photos.length;
+    credit_count_link.innerText = Show.emoji.gift + " " + P.db._photo.credit[info.photo_credit];
     other_photos.appendChild(credit_count_link);
     details.appendChild(other_photos);
   }
@@ -1224,18 +1227,22 @@ Show.pandaPhotoCredits = function(animal, credit, language) {
   for (let item of photos) {
     var photo = item.image;
     var index = item.index.split(".")[1];
+    var img_link = document.createElement('a');
+    // Link to the original instagram media
+    img_link.href = photo.replace("/media/?size=m", "");
     var img = document.createElement('img');
     img.src = photo.replace('/?size=m', '/?size=t');
+    img_link.appendChild(img);
+    var caption_link = document.createElement('a');
+    caption_link.href = "#panda/" + animal._id + "/photo/" + index;
     var caption = document.createElement('h5');
     caption.className = "caption";
-    var link = document.createElement('a');
-    link.href = "#panda/" + animal._id + "/photo/" + index;
-    link.innerText = info.name;
-    caption.appendChild(link);
+    caption.innerText = info.name;
+    caption_link.appendChild(caption);
     var container = document.createElement('div');
     container.className = "photoSample";
-    container.appendChild(img);
-    container.appendChild(caption);
+    container.appendChild(img_link);
+    container.appendChild(caption_link);
     content_divs.push(container);
   }
   return content_divs;
@@ -1263,14 +1270,21 @@ Show.zooInformation = function(zoo, language) {
 // the photos in the website contributed by a single author.
 Show.zooPhotoCredits = function(zoo, language) {
   var info = Show.acquireZooInfo(zoo, language);
+  var img_link = document.createElement('a');
+  // Link to the original instagram media
+  img_link.href = zoo.photo.replace("/media/?size=m", "");
   var img = document.createElement('img');
   img.src = zoo.photo;
+  img_link.appendChild(img);
+  var caption_link = document.createElement('a');
+  caption_link.href = "#zoo/" + zoo._id;
   var caption = document.createElement('h5');
   caption.className = "caption";
   caption.innerText = info.name;
+  caption_link.appendChild(caption);
   var container = document.createElement('div');
   container.className = "photoSample";
-  container.appendChild(img);
-  container.appendChild(caption);
+  container.appendChild(img_link);
+  container.appendChild(caption_link);
   return container;
 }

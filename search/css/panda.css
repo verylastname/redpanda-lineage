@@ -404,7 +404,7 @@ div.pandaAbout h5.caption > a, div.pandaLinks > ul > li > a {
     text-decoration: none !important;
 }
 
-div.photoSample h5.caption > a {
+div.photoSample a {
     color: black;
     text-decoration: none !important;
 }
@@ -550,7 +550,7 @@ div.photoSample {
     padding: 5px;
 }
 
-div.photoSample > img {
+div.photoSample > a > img {
     border: 1px solid #002200;
     width: 100%;
 }
